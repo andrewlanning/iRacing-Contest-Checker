@@ -150,8 +150,8 @@ def check_contests():
                     pass
                 else:
                     eligibility = 1
-                
-                if c['sponsor_dependant'] == True and c['both_locations'] == True and e['sponsor1'] == (c['sponsor_number'] or c['sponsor_number2']) and e['sponsor2'] == (c['sponsor_number'] or c['sponsor_number2']):
+               
+                if c['sponsor_dependant'] == True and c['both_locations'] == True and ((e['sponsor1'] == c['sponsor_number']) or (e['sponsor1'] == c['sponsor_number2'])) and ((e['sponsor2'] == c['sponsor_number']) or (e['sponsor2'] == c['sponsor_number2'])):
                     pass
                 elif c['sponsor_dependant'] == True and c['primary_location'] == True and e['sponsor1'] == (c['sponsor_number'] or c['sponsor_number2']):
                     pass
