@@ -1,0 +1,4 @@
+/json/sessions/*
+/json/entries.json
+/credentials.py
+__pycache__

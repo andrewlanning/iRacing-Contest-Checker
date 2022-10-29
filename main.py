@@ -94,7 +94,12 @@ def dig():
             d = json.load(file)
             print("[INFO] File",id,"Read")
             try:
-                for i in d['session_results'][2]['results']:
+                #Not all sessions are practice -> qualy -> race, so we need to find the race session by type
+                raceEvent = None
+                for event in d['session_results']:
+                    if(event['simsession_type']==6):
+                        raceEvent=event
+                for i in raceEvent['results']:
                     try:
                         if int(i['cust_id']) == int(customerID):
                             entries.append({
@@ -170,7 +175,8 @@ def check_contests():
             else:
                 pass
 
-            print("Draws:",draws)
+            print("Eligible races:",x)
+            print("Draws:",draws,"\n")
 
                        
 auth()
