@@ -58,7 +58,7 @@ def grab():
     url = "".join([url, file])
     r = s.get(url).json()
     try:
-        for n in range(len(r[0])): # Fix this bullshit, it's broken
+        for n in range(len(r)): # Fix this bullshit, it's broken
             sublist.append(r[n]['subsession_id'])
     except:
         pass
