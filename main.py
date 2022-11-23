@@ -58,7 +58,7 @@ def grab():
     url = "".join([url, file])
     r = s.get(url).json()
     try:
-        for n in range(len(r[0])): # Fix this bullshit, it's broken
+        for n in range(len(r)): # Fix this bullshit, it's broken
             sublist.append(r[n]['subsession_id'])
     except:
         pass
@@ -153,9 +153,9 @@ def check_contests():
                
                 if c['sponsor_dependant'] == True and c['both_locations'] == True and ((e['sponsor1'] == c['sponsor_number']) or (e['sponsor1'] == c['sponsor_number2'])) and ((e['sponsor2'] == c['sponsor_number']) or (e['sponsor2'] == c['sponsor_number2'])):
                     pass
-                elif c['sponsor_dependant'] == True and c['primary_location'] == True and e['sponsor1'] == (c['sponsor_number'] or c['sponsor_number2']):
+                elif c['sponsor_dependant'] == True and c['primary_location'] == True and (e['sponsor1'] == c['sponsor_number'] or e['sponsor1'] == c['sponsor_number2']):
                     pass
-                elif c['sponsor_dependant'] == True and c['secondary_location'] == True and e['sponsor2'] == (c['sponsor_number'] or c['sponsor_number2']):
+                elif c['sponsor_dependant'] == True and c['secondary_location'] == True and (e['sponsor2'] == c['sponsor_number'] or e['sponsor2'] == c['sponsor_number2']):
                     pass
                 elif c['sponsor_dependant'] == False:
                     pass
