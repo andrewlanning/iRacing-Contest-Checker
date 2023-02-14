@@ -1,4 +1,7 @@
-/json/sessions/*
+/json/sessions/*.json
 /json/entries.json
 /credentials.py
 __pycache__
+cookies
+user
+iRacingContestChecker.pptx
