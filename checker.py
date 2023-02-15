@@ -11,18 +11,21 @@ from contest import Contest
 
 class Checker(threading.Thread):
     #Private stuff
-
+    #used as static class variable for persistence if thread si restarted
+    customerID = 0
     pwValueToSubmit = ""
 
     #Globals
-    sublist = []
-    entries = []
-    contestList = []
+    
     #Cookies
     s = requests.Session()
 
     def __init__(self, root):
         self.root = root
+        self.sublist = []
+        self.entries = []
+        self.contestList = []
+        self.authError = False
         threading.Thread.__init__(self)
         
     def setCredentials(self, username, password):
@@ -60,6 +63,13 @@ class Checker(threading.Thread):
     def getCookies(self):
         return self.s.cookies
 
+    def getCustomerId(self):
+        return Checker.customerID
+    
+    def setCustomerId(custId):
+        #class variable - static
+        Checker.customerID = custId
+
     #Send off authentication stuff
     def auth(self, username, password):   
         #method probably doing too much now with the cookies
@@ -80,33 +90,24 @@ class Checker(threading.Thread):
 
         response = response.json()
         if response['authcode'] == 0:
-             return False
+            return False
 
-        self.customerID = response['custId']
-        #If user wants to save the login, we need to save the cookies?  
-        # Probably best to move to controller        
-        # if savelogin:
-        #     with open('cookies','wb') as f:
-        #         pickle.dump(self.s.cookies, f)
-        #     with open('user','w') as f:
-        #         f.write(username)
-        #     return True
-
-        # try:
-        #     os.remove('cookies')
-        #     os.remove('user')
-        # except:
-        #     pass
+        Checker.customerID = response['custId']
+        self.authError = False
         return True
     
-
-    
-
     # Grabs all session data for all official races within current year/season for specific customer id (you)
     # Dumps all data to json file. Also dumps car and series info to json file.
     def grab(self):
-        sd = {'season_year':year, 'season_quarter':season, 'cust_id':self.customerID, 'official_only':True, 'event_types':5}
-        r = self.s.get('https://members-ng.iracing.com/data/results/search_series', params=sd).json()
+        sd = {'season_year':year, 'season_quarter':season, 'cust_id':Checker.customerID, 'official_only':True, 'event_types':5}
+        try:
+            r = self.s.get('https://members-ng.iracing.com/data/results/search_series', params=sd)
+        except:
+            return False
+        if r.status_code == 401:
+            return False
+
+        r = r.json()
         url = (r['data']['chunk_info']['base_download_url'])
         file = (r['data']['chunk_info']['chunk_file_names'][0])
         url = "".join([url, file])
@@ -139,6 +140,8 @@ class Checker(threading.Thread):
         json.dump(r, out_file, indent = 6) 
         out_file.close()
         print("[INFO] Saved Car File")
+
+        return True
 
     # Digs out all of the useful information from all of the session json
     # Dumps Entries file
@@ -240,28 +243,39 @@ class Checker(threading.Thread):
     def getStatus(self):
         return self.status
 
-    def run(self):
-                     
+    def getAuthError(self):
+        return self.authError
+
+    def run(self):                     
         print("Date convert...") 
         self.status = "Please Wait | Date convert..."            
         self.root.event_generate("<<Update>>")     
         time.sleep(0.5)         
         self.dateconvert()
+
         print("grab...")         
         self.status = "Please Wait | Fetching session data..."   
         self.root.event_generate("<<Update>>")       
         time.sleep(0.5)
-        self.grab()
+        grabSuccess = self.grab()
+        if not grabSuccess:
+            #auth token expired
+            self.status = "Error. Please re-enter your credentials"  
+            self.authError = True 
+            self.root.event_generate("<<Update>>")
+            return
+
         print("dig...")          
-        self.status = "Please Wait | Analysing session data..."    
+        self.status = "Please Wait | Analyzing session data..."    
         self.root.event_generate("<<Update>>")   
         time.sleep(0.5)  
         self.dig()
+
         print("check contests...")
         self.status = "Please Wait | Checking contests..."                   
         self.check_contests()
-        #time.sleep(5)
+    
         self.status = "All Done"   
         self.root.event_generate("<<Update>>")
-        time.sleep(0.5)
+        return
 

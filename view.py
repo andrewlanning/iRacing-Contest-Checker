@@ -10,20 +10,20 @@ import webbrowser
 
 class checkerUi:
     def __init__(self, root, controller, checker):
-        root = root
+        self.root = root
         self.controller = controller
         self.controller.setView(self)
         self.checker = checker
 
         root.title("iRacing Contest Checker")
 
-        login_frame = ttk.Frame(root, relief='sunken', padding="12 12 12 12")
+        login_frame = ttk.Frame(self.root, relief='sunken', padding="12 12 12 12")
         login_frame.grid(column=0, row=0, sticky=(N,W))
 
-        footer_frame = ttk.Frame(root, padding="3 3 3 3")
+        footer_frame = ttk.Frame(self.root, padding="3 3 3 3")
         footer_frame.grid(column=0, row=1, rowspan=2, sticky=(N,W))
 
-        self.results_frame = ttk.Frame(root, relief='sunken', width=400, height=400, padding="12 12 12 12")
+        self.results_frame = ttk.Frame(self.root, relief='sunken', width=550, height=450, padding="12 12 12 12")
         self.results_frame.grid(column=1, row=0, rowspan=2, sticky=(E,W))
 
 
@@ -42,7 +42,7 @@ class checkerUi:
         self.status = StringVar()
         self.status_label = ttk.Label(login_frame, textvariable= self.status)
 
-        checkButton = ttk.Button(login_frame, text="Check Participation", command=self.checkContests)
+        self.checkButton = ttk.Button(login_frame, text="Check Participation", command=self.checkContests)
         self.results = StringVar()
         self.results_label = ttk.Label(login_frame,textvariable = self.results)
 
@@ -59,7 +59,7 @@ class checkerUi:
         label_password.grid(            column=0, row=1, sticky=(N,W), pady=5)
         password_entry.grid(            column=1, row=1, columnspan=2, sticky=(N,W), pady=5, padx=5)
         saveCredentials_checkbox.grid(  column=2, row=2, sticky=(N,W))
-        checkButton.grid(               column=1, row=3, sticky=(N,W), pady=10)
+        self.checkButton.grid(               column=1, row=3, sticky=(N,W), pady=10)
         self.status_label.grid(         column=0, row=4, columnspan=3, sticky=(N,W), pady=5)
 
         #footer_frame grid----------------------------------------------------------------------------------
@@ -78,9 +78,14 @@ class checkerUi:
             self.userName.set(savedUser)
             self.password.set("********")
             self.saveCredentials.set('1')
+    
+    def getRoot(self):
+        return self.root
 
     def checkContests(self):
         self.controller.checkContests(self.userName, self.password, self.saveCredentials)
+        self.checkButton.state(['disabled'])
+        self.controller.flagNewThread(False)
 
     #function called by event from checker thread
     def update(self, data):
@@ -100,7 +105,17 @@ class checkerUi:
                 cf.grid(column=column, row=row, padx=3, pady=3)              
 
                 index = index +1
+            #Let controller know to start a new thread next time button is clicked
+            self.checkButton.state(['!disabled'])
+            self.controller.flagNewThread(True)
+        
+        #auth expired
+        if self.checker.getAuthError():
+            self.checkButton.state(['!disabled'])
+            self.saveCredentials.set('')
+            self.controller.flagNewThread(True)
 
+        
 
 
     def squareGridCol(self, length, index):
@@ -121,7 +136,9 @@ class checkerUi:
 
     def callback(self, url):
         webbrowser.open_new(url)
-
+    
+    def setContestChecker(self, newChecker):
+        self.checker = newChecker
 
 
 #Main Loop
