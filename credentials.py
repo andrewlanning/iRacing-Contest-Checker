@@ -1,3 +1,3 @@
-username = # Email Here
-password = # Password Here
-customerID = # ID Here
+username = # "jerry.clapper.hotmail.com
+password = # Bishop123
+customerID = # 389849
