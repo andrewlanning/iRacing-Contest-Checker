@@ -6,9 +6,9 @@ import json
 import credentials
 
 #Private stuff
-username = credentials.username
-password = credentials.password
-customerID = credentials.customerID
+username = credentials jerry.clapper@hotmail.com
+password = credentials Bishop123
+customerID = credentials 389849
 
 #Globals
 sublist = []
