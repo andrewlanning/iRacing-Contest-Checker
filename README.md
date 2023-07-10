@@ -19,8 +19,3 @@ If you integrate this code, please provide credit :)
 
 KNOWN ISSUES:
 10-29-2022 : Currently not checking for 50% race completion.
-
-UPDATES:
-
-10-23-2022 : Initial Release/Bugfixes
-10-29-2022 : Updated Moza Car ID to correct ID. Swapped Heusinkveld and DOF Sponsor ID's. Now checking simsessiontype.
