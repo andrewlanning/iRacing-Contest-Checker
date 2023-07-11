@@ -1,3 +1,3 @@
-username = # "jerry.clapper.hotmail.com
-password = # Bishop123
+username = # "
+password = # ghgjgjghgh
 customerID = # 389849
