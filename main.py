@@ -8,7 +8,7 @@ import credentials
 #Private stuff
 username = credentials 
 password = credentials
-customerID = credentials 
+customerID = 4545453454
 
 #Globals
 sublist = []
