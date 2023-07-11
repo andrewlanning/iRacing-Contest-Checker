@@ -6,8 +6,8 @@ import json
 import credentials
 
 #Private stuff
-username = credentials jerry.clapper@hotmail.com
-password = credentials Bishop123
+username = credentials 
+password = credentials
 customerID = credentials 389849
 
 #Globals
